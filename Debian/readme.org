@@ -1,0 +1,6 @@
+My debian is debian-11.2.0-amd64-netinst.iso from scratch without desktop enviroment.
+The first steph is change the source.list apt update then
+sudo apt update && sudo apt install xorg xserver-xorg gcc wget vim git-y
+
+
+
