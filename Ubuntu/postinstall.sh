@@ -1,13 +1,15 @@
 #!/bin/bash
 
+#  ________    ______  _______    
+# |_   __  | .' ___  ||_   __ \   Fernando G. Prieto
+#   | |_ \_|/ .'   \_|  | |__) |  https://www.fernandogprieto.com/
+#   |  _|   | |   ____  |  ___/   https://github.com/fernandogprieto
+#  _| |_    \ `.___]  |_| |_      https://twitter.com/fernandogprieto 
+# |_____|    `._____.'|_____| 
+#
 # Script created for personal use.
-# author: Fernando G. Prieto
-# https://github.com/fernandogprieto
 # last update: 2023-10-29
-# Scripts - https://plus.diolinux.com.br/t/compartilhe-seus-scripts-de-pos-instalacao/7452
-
-
-
+# Scripts - https://www.fernandogprieto.com/projects/
 
 
 # Install Nvidia - Software Update select private user.
