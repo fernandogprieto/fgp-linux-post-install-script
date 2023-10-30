@@ -1,3 +1,15 @@
+#!/bin/bash
+
+# Script created for personal use.
+# author: Fernando G. Prieto
+# https://github.com/fernandogprieto
+# last update: 2023-10-29
+# Scripts - https://plus.diolinux.com.br/t/compartilhe-seus-scripts-de-pos-instalacao/7452
+
+
+
+
+
 # Install Nvidia - Software Update select private user.
 #
 sudo apt install acl aria2 byobu curl elinks ethtool exfat-fuse exfat-utils fail2ban git iftop iperf3 libstring-mkpasswd-perl mc molly-guard net-tools pigz rsync vim wget 
