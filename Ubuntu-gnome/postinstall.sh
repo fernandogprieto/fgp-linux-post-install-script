@@ -8,7 +8,7 @@
 # |_____|    `._____.'|_____| 
 #
 # Script created for personal use.
-# last update: 2023-10-29
+# last update: 2023-10-31
 # Scripts -  https://www.fernandogprieto.com/projects/
 
 # ---------------------------------------------------------------------------- #
@@ -106,10 +106,8 @@ then
 			zip
 			dialog
 			tilix
-			flameshot
 			jq
 			exa
-			tree
 			dnsutils
 			traceroute
 			inetutils-traceroute
@@ -119,6 +117,13 @@ then
 			synaptic 
 			uget 
 			gitg
+			psensor
+			vnstat
+			openvpn
+			whois
+			nmap
+			netcat
+			id-utils
 
 			# CLI
 			cmatrix
@@ -126,14 +131,13 @@ then
 			btop
 			htop
 			neofetch
-			speedtest
-			yt-dlp
 			mc
 			build-essential 
-			curl 
+			curl
 			wget
 			git 
-			nano 
+			nano
+			vim 
 			tree 
 
 			# Gnome
@@ -193,6 +197,7 @@ then
 			fonts-millimetre
 			fonts-mplus
 			fonts-nanum
+			fonts-noto
 			fonts-noto-color-emoji
 			fonts-open-sans
 			fonts-osifont
@@ -222,12 +227,14 @@ then
 			com.calibre_ebook.calibre
 			com.github.hluk.copyq
 			org.qbittorrent.qBittorrent
+			io.neovim.nvim
 		)
 
 		## ----- Snap ----- ##
 		PROGRAMS_SNAP=(
 			inkscape
 			skype
+			pycharm-community --classic
 		)
 
 		echo -e "$BLUE Updating package list && upgrade ... $CLEAR"
@@ -319,16 +326,44 @@ fi # end Ubuntu
 
 # ------------------------------- APPLICATIONS ------------------------------- #
 		
-		#Chrome
+		# Chrome
 		wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 		sudo chmod +x ./google-chrome-stable_current_amd64.deb
 		sudo dpkg -i ./google-chrome-stable_current_amd64.deb
 		rm -rf ./google-chrome-stable_current_amd64.deb
 
+		# Microsoft Edge
+		wget -O - https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /usr/share/keyrings/microsoft.gpg
+		sudo rm /etc/apt/sources.list.d/microsoft-edge*.list
+		sudo sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge.list'
+		sudo apt update
+		sudo apt install microsoft-edge-stable
 
+		# VScode
+		wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+		sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+		sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
+		rm -f packages.microsoft.gpg
+		sudo apt update
+		sudo apt install code
 
+		# Anydesk
+		wget -qO- https://keys.anydesk.com/repos/DEB-GPG-KEY| sudo gpg --dearmor -o /usr/share/keyrings/anydesk-stable-keyring.gpg
+		echo "deb [arch=amd64 signed-by=/usr/share/keyrings/anydesk-stable-keyring.gpg] http://deb.anydesk.com/ all main" | sudo tee /etc/apt/sources.list.d/anydesk-stable.list
+		sudo apt update
+		sudo apt install anydesk
 
-#curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | sudo bash
+		# Nordvpn
+		sh <(curl -sSf https://downloads.nordcdn.com/apps/linux/install.sh)
+		sudo usermod -aG nordvpn $USER
+		# ------ Reboot OS ---------#
+		# nordvpn login
+		# nordvpn connect
+
+		# Libraries
+		sudo apt install npm -y
+		curl -fsSL https://deb.nodesource.com/test | bash -
+
 #	env QT_QPA_PLATFORM=xcb copyq
 	#Exec=env QT_QPA_PLATFORM=xcb copyq
 	#https://copyq.readthedocs.io/en/latest/known-issues.html
