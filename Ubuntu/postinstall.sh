@@ -9,39 +9,326 @@
 #
 # Script created for personal use.
 # last update: 2023-10-29
-# Scripts - https://www.fernandogprieto.com/projects/
+# Scripts -  https://www.fernandogprieto.com/projects/
+
+# ---------------------------------------------------------------------------- #
+
+# --------------------------------- VARIABLE---------------------------------- #
+
+LINE=$(ColorGreen '# ---------------------------------------------------------------------------- #')
+
+GREEN='\e[32m'
+BLUE='\e[34m'
+YELLOW='\033[0;33m'
+CLEAR='\e[0m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+ColorGreen() {
+	echo -ne $green$1$clear
+}
+ColorBlue() {
+	echo -ne $blue$1$clear
+}
+# ---------------------------------------------------------------------------- #
+
+echo -e "$BLUE Checking OS type... $CLEAR"
+
+OS="$(. /etc/os-release && echo $ID)"
+if [[ "${OS}" == "ubuntu" ]]
+then
+	OS_UBUNTU=1
+else
+	echo -e "$RED OS not supported $CLEAR" 
+    exit 1
+fi
+
+# ---------------------------------------------------------------------------- #
+
+# --------------------------------- UBUNTU ----------------------------------- #
+if [[ -n "${OS_UBUNTU-}" ]]
+then
+		PPAS=(
+		# ppa:graphics-drivers/ppa		   # Nvidia
+		# ppa:libreoffice/ppa                # LibreOffice
+		# ppa:stellarium/stellarium-releases # Stellarium
+		)
+
+		# Desktop adjustments
+		echo -e "$BLUE Applying desktop adjustments... $CLEAR"
+
+		gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'LEFT'
+		gsettings set org.gnome.shell.extensions.dash-to-dock show-apps-at-top true
+		gsettings set org.gnome.shell.extensions.dash-to-dock always-center-icons false
+		gsettings set org.gnome.shell.extensions.dash-to-dock show-apps-always-in-the-edge false
+
+		gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize-or-previews'
+		gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 28
+		gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts-network false
+		gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts-only-mounted true
+
+		gsettings set org.gnome.shell.extensions.ding show-home false
+		gsettings set org.gnome.shell.extensions.ding keep-arranged true
+		gsettings set org.gnome.shell.extensions.ding start-corner 'top-right'
+
+		echo -e "$GREEN Desktop adjustments applied. $CLEAR"
+
+		## ----- APT  ----- ##
+		PROGRAMS_APT=(
+			# System
+			lsb-release 
+			gnupg 
+			apt-transport-https 
+			ca-certificates 
+			software-properties-common
+			dkms 
+			linux-headers-generic 
+			python3 
+			python3-smbc 
+			smbclient
+			exfat-fuse 
+			hfsprogs 
+			libfuse2 
+			exfat-fuse
+			ffmpeg
+			chromium-codecs-ffmpeg-extra
+			laptop-mode-tools
+			lsb
+			nautilus-image-converter
+			net-tools
+			rar
+			ubuntu-wallpapers
+			ufw
+			unrar
+			unzip
+			v4l2loopback-dkms
+			wmctrl
+			zip
+			dialog
+			tilix
+			flameshot
+			jq
+			exa
+			tree
+			dnsutils
+			traceroute
+			inetutils-traceroute
+			gufw 
+			hardinfo 
+			dconf-editor 
+			synaptic 
+			uget 
+			gitg
+
+			# CLI
+			cmatrix
+			git
+			btop
+			htop
+			neofetch
+			speedtest
+			yt-dlp
+			mc
+			build-essential 
+			curl 
+			wget
+			git 
+			nano 
+			tree 
+
+			# Gnome
+			chrome-gnome-shell
+			dconf-editor
+			gnome-backgrounds
+			gnome-clocks
+			gnome-firmware
+			gnome-maps
+			gnome-shell-extensions
+			gnome-software-plugin-flatpak
+			gnome-sushi
+			gnome-tweaks
+			gnome-weather
+			gparted gpart
+			
+			# virtualization
+			qemu-system 
+			virt-manager 
+			bridge-utils
+			
+			# Programs
+			audacity
+			cpu-x
+			flatpak
+			remmina
+			stellarium
+			# virtualbox
+			# virtualbox-dkms
+			
+			# Fonts
+			fonts-apropal
+			fonts-atarismall
+			fonts-baekmuk
+			fonts-bajaderka
+			fonts-blankenburg
+			fonts-cantarell
+			fonts-comfortaa
+			fonts-dejavu-extra
+			fonts-fanwood
+			fonts-firacode
+			fonts-font-awesome
+			fonts-gamaliel
+			fonts-glasstty
+			fonts-hack
+			fonts-hack-ttf
+			fonts-havana
+			fonts-junicode
+			fonts-lato
+			fonts-league-spartan
+			fonts-lemonada
+			fonts-le-murmure
+			fonts-lexi-gulim
+			fonts-lindenhill
+			fonts-lmodern
+			fonts-lyx
+			fonts-millimetre
+			fonts-mplus
+			fonts-nanum
+			fonts-noto-color-emoji
+			fonts-open-sans
+			fonts-osifont
+			fonts-oxygen
+			fonts-paratype
+			fonts-powerline
+			fonts-prociono
+			fonts-roboto
+			fonts-roboto-slab
+			fonts-tomsontalks
+			fonts-ubuntu-console
+			fonts-vollkorn
+			fonts-yanone-kaffeesatz
+			ttf-ancient-fonts
+			ttf-mscorefonts-installer
+		)
+
+		## ----- Flatpak ----- ##
+		PROGRAMS_FLATPAK=(
+			com.bitwarden.desktop
+			com.discordapp.Discord
+			org.telegram.desktop
+			com.obsproject.Studio
+			com.slack.Slack
+			com.spotify.Client
+			org.gimp.GIMP
+			com.calibre_ebook.calibre
+			com.github.hluk.copyq
+			org.qbittorrent.qBittorrent
+		)
+
+		## ----- Snap ----- ##
+		PROGRAMS_SNAP=(
+			inkscape
+			skype
+		)
+
+		echo -e "$BLUE Updating package list && upgrade ... $CLEAR"
+		
+		sudo apt update -y
+		sudo apt upgrade -y
+		sudo apt autoremove -y 
+		sudo apt autoclean 
+		sudo snap refresh
+
+		echo -ne "
+		$LINE
+		$(ColorGreen '---------') $(ColorBlue 'Repository') $(ColorGreen '---------')
+		$LINE"
+		
+
+# ---------------------------------------------------------------------------- #
+
+# --------------------------------- EXECUTE ---------------------------------- #
+
+		for program_name in ${PROGRAMS_APT[@]}; do
+				if ! dpkg -l | grep -q $program_name; then # Only install if it is not already installed
+						echo -e "\n\n${YELLOW}"$LINE
+						echo -e "	[INSTALLING] - $program_name ${NC}"
+						echo -e "${YELLOW}"$LINE"${NC}\n"
+
+						sudo apt install "$program_name" -y -q
+				fi
+		done
+
+		# remove softwares
+		sudo apt purge -y \
+			aisleriot gnome-mahjongg gnome-mines gnome-sudoku \
+			transmission \
+			totem \
+			usb-creator-gtk \
+			libreoffice* 
+		
+		# disable apt ads
+		sudo pro config set apt_news=false
+		sudo systemctl disable ubuntu-advantage
+
+		# restricted extras
+		echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
+		sudo apt install -y ubuntu-restricted-extras
+
+		#Update
+		echo -e "$BLUE Updating package list && upgrade ... $CLEAR"
+		sudo apt install -f && sudo apt autoremove -y && sudo apt autoclean && sudo apt clean
+
+		## ----- Flatpak ---- -##
+		sudo flatpak update -y
+		flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+		for program_name in ${PROGRAMS_FLATPAK[@]}; do
+				if ! flatpak list | grep -q $program_name; then # Só instala se já não estiver instalado
+						echo -e "\n\n${YELLOW}"$LINE
+						echo -e "	[INSTALLING] - $program_name ${NC}"
+						echo -e "${YELLOW}"$LINE"${NC}\n"
+
+						flatpak install flathub "$program_name" -y
+				fi
+		done
+
+		## ----- Snap ----- ##
+		sudo snap refresh
+
+		for program_name in ${PROGRAMS_SNAP[@]}; do
+				if ! snap list | grep -q $program_name; then # Só instala se já não estiver instalado
+						echo -e "\n\n${YELLOW}"$LINE
+						echo -e "	[INSTALLING] - $program_name ${NC}"
+						echo -e "${YELLOW}"$LINE"${NC}\n"
+
+						sudo snap install "$program_name"
+				fi
+		done
+# ---------------------------------------------------------------------------- #
+
+# ------------------------------- POST INSTALL ------------------------------- #
+		sudo apt install -y --fix-broken --install-recommends
+		sudo flatpak update -y
+		sudo flatpak repair
+		sudo snap refresh
+		sudo apt install -f && sudo apt autoremove -y && sudo apt autoclean && sudo apt clean
+
+fi # end Ubuntu
+
+# ---------------------------------------------------------------------------- #
+
+# ------------------------------- APPLICATIONS ------------------------------- #
+		
+		#Chrome
+		wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+		sudo chmod +x ./google-chrome-stable_current_amd64.deb
+		sudo dpkg -i ./google-chrome-stable_current_amd64.deb
+		rm -rf ./google-chrome-stable_current_amd64.deb
 
 
-# Install Nvidia - Software Update select private user.
-#
-sudo apt install acl aria2 byobu curl elinks ethtool exfat-fuse exfat-utils fail2ban git iftop iperf3 libstring-mkpasswd-perl mc molly-guard net-tools pigz rsync vim wget 
-sudo apt-get install apt-transport-https gnupg software-properties-common feh compton nodejs npm -y
-sudo apt install xorg python3-xcffib python3-pip python3-cairocffi libcairo2 lightdm python3-psutil
-sudo apt-get install lxappearance fish suckless-tools python3 python3-pip libpangocairo-1.0-0 alsa-utils pavucontrol pcmanfm suckless-tools python3-gi libx11-dev libxft-dev libxinerama-dev -y
-pip3 install xcffib dbus-python autokey dbus-next
+		
 
-sudo dpkg -i google-chrome-stable_current_amd64.deb
-sudo dpkg -i anydesk_6.1.1-1_amd64.deb 
-sudo apt-get install blueman bluez-utils bluez bluetooth
-sudo apt install gnome-shell-extension-gpaste
-sudo apt-get install audacity obs-studio libao4 libasound2 exfat-utils -y
-sudo apt-get install audacity obs-studio vlc libao4 libasound2  -y
-sudo apt install network-manager network-manager-openvpn network-manager-openvpn-gnome
-sudo apt-get install cifs-utils libcups2 cups 
-sudo apt install gvfs-backends net-tools ssh ssh-tools openssl ca-certificates gnupg2 openssh-server rsync -y
-sudo apt install calibre gimp inkscape -y
-
-sudo snap install vlc, spotify firefox opera discord telegram
-
-#Flatpak
-sudo apt install flatpak
-sudo apt install gnome-software-plugin-flatpak
-sudo apt install flatpak gnome-software-plugin-flatpak gnome-software
-flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-flatpak install flathub com.usebottles.bottles
-flatpak run com.usebottles.bottles
-
-
-
-
-
+#curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | sudo bash
+#	env QT_QPA_PLATFORM=xcb copyq
+	#Exec=env QT_QPA_PLATFORM=xcb copyq
+	#https://copyq.readthedocs.io/en/latest/known-issues.html
