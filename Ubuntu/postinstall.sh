@@ -283,7 +283,7 @@ then
 		flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 		for program_name in ${PROGRAMS_FLATPAK[@]}; do
-				if ! flatpak list | grep -q $program_name; then # Só instala se já não estiver instalado
+				if ! flatpak list | grep -q $program_name; then # Only install if it is not already installed
 						echo -e "\n\n${YELLOW}"$LINE
 						echo -e "	[INSTALLING] - $program_name ${NC}"
 						echo -e "${YELLOW}"$LINE"${NC}\n"
@@ -296,7 +296,7 @@ then
 		sudo snap refresh
 
 		for program_name in ${PROGRAMS_SNAP[@]}; do
-				if ! snap list | grep -q $program_name; then # Só instala se já não estiver instalado
+				if ! snap list | grep -q $program_name; then # Only install if it is not already installed
 						echo -e "\n\n${YELLOW}"$LINE
 						echo -e "	[INSTALLING] - $program_name ${NC}"
 						echo -e "${YELLOW}"$LINE"${NC}\n"
@@ -326,7 +326,7 @@ fi # end Ubuntu
 		rm -rf ./google-chrome-stable_current_amd64.deb
 
 
-		
+
 
 #curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | sudo bash
 #	env QT_QPA_PLATFORM=xcb copyq
