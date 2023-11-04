@@ -16,4 +16,4 @@ sudo bash NVIDIA-Linux-x86_64-390.147.run
 systemctl set-default graphical.target
 systemctl reboot
 
-xrandr --output VGA-0 --mode 1600x900
+#xrandr --output VGA-0 --mode 1600x900
