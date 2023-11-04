@@ -109,6 +109,8 @@ function terraform-stable(){
 		curl -s -o terraform_1.6.3_linux_amd64.zip https://releases.hashicorp.com/terraform/1.6.3/terraform_1.6.3_linux_amd64.zip
 		unzip terraform_1.6.3_linux_amd64.zip
 		sudo mv terraform /usr/local/bin/
+		sleep 3
+		rm -rf terraform_1.6.3_linux_amd64.zip
 	
 		echo -e "$GREEN Terraform has been installed successfully.$CLEAR"
 	else
@@ -117,6 +119,7 @@ function terraform-stable(){
 }
 
 function gcloud-cli-stable(){
+	
 	echo "deb [signed-by=/usr/share/keyrings/cloud.google.asc] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 	curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
 	curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /usr/share/keyrings/cloud.google.asc
