@@ -8,14 +8,12 @@
 # |_____|    `._____.'|_____| 
 #
 # Script created for personal use.
-# last update: 2023-10-31
-# Scripts -  https://www.fernandogprieto.com/projects/
+# last update: 2023-11-04
+# Postinstall scripts -  https://www.fernandogprieto.com/projects/
 
 # ---------------------------------------------------------------------------- #
 
 # --------------------------------- VARIABLE---------------------------------- #
-
-LINE=$(ColorGreen '# ---------------------------------------------------------------------------- #')
 
 GREEN='\e[32m'
 BLUE='\e[34m'
@@ -30,6 +28,9 @@ ColorGreen() {
 ColorBlue() {
 	echo -ne $blue$1$clear
 }
+
+LINE=$(ColorGreen '# ---------------------------------------------------------------------------- #')
+
 # ---------------------------------------------------------------------------- #
 
 echo -e "$BLUE Checking OS type... $CLEAR"
@@ -48,12 +49,6 @@ fi
 # --------------------------------- UBUNTU ----------------------------------- #
 if [[ -n "${OS_UBUNTU-}" ]]
 then
-		PPAS=(
-		# ppa:graphics-drivers/ppa		   # Nvidia
-		# ppa:libreoffice/ppa                # LibreOffice
-		# ppa:stellarium/stellarium-releases # Stellarium
-		)
-
 		# Desktop adjustments
 		echo -e "$BLUE Applying desktop adjustments... $CLEAR"
 
@@ -73,19 +68,30 @@ then
 
 		echo -e "$GREEN Desktop adjustments applied. $CLEAR"
 
+
+		# ----- PPAs -----#
+		PPAS=(
+			ppa:ansible/ansible
+			ppa:stellarium/stellarium-releases # Stellarium
+			# ppa:graphics-drivers/ppa		   # Nvidia
+			# ppa:libreoffice/ppa              # LibreOffice
+		)
+
 		## ----- APT  ----- ##
 		PROGRAMS_APT=(
 			# System
 			lsb-release 
-			gnupg 
+			gnupg
+			gnupg2
 			apt-transport-https 
 			ca-certificates 
 			software-properties-common
 			dkms 
 			linux-headers-generic 
 			python3 
-			python3-smbc 
+			python3-smbc
 			smbclient
+			npm
 			exfat-fuse 
 			hfsprogs 
 			libfuse2 
@@ -124,6 +130,7 @@ then
 			nmap
 			netcat
 			id-utils
+			copyq
 
 			# CLI
 			cmatrix
@@ -167,6 +174,9 @@ then
 			stellarium
 			# virtualbox
 			# virtualbox-dkms
+			
+			#Cloud-Tools
+			ansible
 			
 			# Fonts
 			fonts-apropal
@@ -225,7 +235,6 @@ then
 			com.spotify.Client
 			org.gimp.GIMP
 			com.calibre_ebook.calibre
-			com.github.hluk.copyq
 			org.qbittorrent.qBittorrent
 			io.neovim.nvim
 		)
@@ -234,7 +243,7 @@ then
 		PROGRAMS_SNAP=(
 			inkscape
 			skype
-			pycharm-community --classic
+			pycharm-community
 		)
 
 		echo -e "$BLUE Updating package list && upgrade ... $CLEAR"
@@ -247,14 +256,29 @@ then
 
 		echo -ne "
 		$LINE
-		$(ColorGreen '---------') $(ColorBlue 'Repository') $(ColorGreen '---------')
+		$(ColorBlue 'Repository') 
 		$LINE"
 		
+		## ----- NPM Packages ----- ##
+		NPM_PACKAGES=(
+			@microsoft/fast-cli
+		)
+
+		## ----- NPM Development Packages ----- ##
+		#NPM_DEV_PACKAGES=(
+		#)
+		
+		## ----- Add PPA Packages ----- ##
+		for ppa in ${PPAS[@]}; do
+				if ! grep -q "^deb .*$ppa" /etc/apt/sources.list /etc/apt/sources.list.d/*; then
+						sudo apt-add-repository "$ppa" -y
+				fi
+		done
 
 # ---------------------------------------------------------------------------- #
 
 # --------------------------------- EXECUTE ---------------------------------- #
-
+		
 		for program_name in ${PROGRAMS_APT[@]}; do
 				if ! dpkg -l | grep -q $program_name; then # Only install if it is not already installed
 						echo -e "\n\n${YELLOW}"$LINE
@@ -311,6 +335,36 @@ then
 						sudo snap install "$program_name"
 				fi
 		done
+
+		## ----- NPM ----- ##
+		sudo npm update
+
+		for package_name in ${NPM_PACKAGES[@]}; do
+    		if ! npm list -g | grep -q $package_name; then # Only install if it is not already installed globally
+        				echo -e "\n\n${YELLOW}"$LINE
+        				echo -e "  [INSTALLING] - $package_name ${NC}"
+        				echo -e "${YELLOW}"$LINE"${NC}\n"
+
+        				sudo npm install -g "$package_name"
+    		fi
+		done
+
+# ---------------------------------------------------------------------------- #
+
+# ------------------------------- APPLICATIONS ------------------------------- #
+	# Source applications.sh to use its functions
+	echo "Sourcing applications.sh to use its functions..."
+			if [ -f "$(pwd)/applications.sh" ]; then
+				chmod +x ./applications.sh
+    			source ./applications.sh
+
+    		# Call the inst-apps function to install applications
+    			inst-apps
+			else
+    				echo "${RED}[ERROR] applications.sh does not exist or is not accessible. ${NC}"
+    		exit 1
+			fi
+	
 # ---------------------------------------------------------------------------- #
 
 # ------------------------------- POST INSTALL ------------------------------- #
@@ -319,51 +373,53 @@ then
 		sudo flatpak repair
 		sudo snap refresh
 		sudo apt install -f && sudo apt autoremove -y && sudo apt autoclean && sudo apt clean
+		npm update
 
 fi # end Ubuntu
 
 # ---------------------------------------------------------------------------- #
 
-# ------------------------------- APPLICATIONS ------------------------------- #
-		
-		# Chrome
-		wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-		sudo chmod +x ./google-chrome-stable_current_amd64.deb
-		sudo dpkg -i ./google-chrome-stable_current_amd64.deb
-		rm -rf ./google-chrome-stable_current_amd64.deb
+# ------------------------------- CHECKLIST ---------------------------------- #
+# Add to the checklist section of postinstall.sh
+echo -e "\nAPT's installed:"
+for program_name in ${PROGRAMS_APT[@]}; do
+	if dpkg -l | grep -q $program_name; then 
+		echo -e "	${GREEN}[INSTALLED] - $program_name ${NC}"
+	else
+		echo -e "	${RED}[ERROR] - $program_name ${NC}"
+	fi
+done
 
-		# Microsoft Edge
-		wget -O - https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /usr/share/keyrings/microsoft.gpg
-		sudo rm /etc/apt/sources.list.d/microsoft-edge*.list
-		sudo sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge.list'
-		sudo apt update
-		sudo apt install microsoft-edge-stable
+echo -e "\nFLATPAK's installed:"
+for program_name in ${PROGRAMS_FLATPAK[@]}; do
+	if flatpak list | grep -q $program_name; then 
+		echo -e "	${GREEN}[INSTALLED] - $program_name ${NC}"
+	else
+		echo -e "	${RED}[ERROR] - $program_name ${NC}"
+	fi
+done
 
-		# VScode
-		wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
-		sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
-		sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
-		rm -f packages.microsoft.gpg
-		sudo apt update
-		sudo apt install code
+echo -e "\nSNAP's installed:"
+for program_name in ${PROGRAMS_SNAP[@]}; do
+	if snap list | grep -q $program_name; then 
+		echo -e "	${GREEN}[INSTALLED] - $program_name ${NC}"
+	else
+		echo -e "	${RED}[ERROR] - $program_name ${NC}"
+	fi
+done
 
-		# Anydesk
-		wget -qO- https://keys.anydesk.com/repos/DEB-GPG-KEY| sudo gpg --dearmor -o /usr/share/keyrings/anydesk-stable-keyring.gpg
-		echo "deb [arch=amd64 signed-by=/usr/share/keyrings/anydesk-stable-keyring.gpg] http://deb.anydesk.com/ all main" | sudo tee /etc/apt/sources.list.d/anydesk-stable.list
-		sudo apt update
-		sudo apt install anydesk
+echo -e "\nNPM packages installed:"
+for package_name in ${NPM_PACKAGES[@]}; do
+    if npm list -g | grep -q $package_name; then 
+        echo -e "   ${GREEN}[INSTALLED] - $package_name ${NC}"
+    else
+        echo -e "	${RED}[ERROR] - $package_name ${NC}"
+    fi
+done
 
-		# Nordvpn
-		sh <(curl -sSf https://downloads.nordcdn.com/apps/linux/install.sh)
-		sudo usermod -aG nordvpn $USER
-		# ------ Reboot OS ---------#
-		# nordvpn login
-		# nordvpn connect
+echo -e "\nApplications installed:"
+source ./applications.sh
+check-apps
 
-		# Libraries
-		sudo apt install npm -y
-		curl -fsSL https://deb.nodesource.com/test | bash -
-
-#	env QT_QPA_PLATFORM=xcb copyq
-	#Exec=env QT_QPA_PLATFORM=xcb copyq
-	#https://copyq.readthedocs.io/en/latest/known-issues.html
+# echo -e "\n Reboot Now \n"
+# ----------------------------------- END ------------------------------------ #
