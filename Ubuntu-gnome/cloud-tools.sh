@@ -119,13 +119,58 @@ function terraform-stable(){
 }
 
 function gcloud-cli-stable(){
-	
-	echo "deb [signed-by=/usr/share/keyrings/cloud.google.asc] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-	curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-	curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /usr/share/keyrings/cloud.google.asc
-	sudo apt-get update 
-	sudo apt-get install google-cloud-cli
+	gcloud_v=$(gcloud --version | grep 'Google Cloud SDK' | awk '{print $4}')
+	if ! command -v gcloud &> /dev/null; then
+		echo -e "$RED Gcloud is not installed. Installing Gcloud.$CLEAR"
 
+		echo "deb [signed-by=/usr/share/keyrings/cloud.google.asc] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+		curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+		curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /usr/share/keyrings/cloud.google.asc
+		sudo apt-get update 
+		sudo apt-get install google-cloud-cli
+	
+		echo -e "$GREEN Gcloud has been installed successfully.$CLEAR"
+	else
+		echo -e "$YELLOW  The installation of Gcloud ($gcloud_v) already exists.$CLEAR"
+	fi
+}
+
+function aws-cli-stable(){
+	aws_cli_v=$(aws --version)
+	if ! command -v aws &> /dev/null; then
+		echo -e "$RED AWS-CLI is not installed. Installing AWS-CLI.$CLEAR"
+
+		curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+		unzip awscliv2.zip
+		sudo ./aws/install
+		rm -rf ./aws && rm -f awscliv2.zip
+
+		echo -e "$GREEN AWS-CLI has been installed successfully.$CLEAR"
+	else
+		echo -e "$YELLOW  The installation of AWS-CLI ($aws_cli_v) already exists.$CLEAR"
+	fi
+}
+
+function azure-cli-stable(){ 
+	azure_v=$(az --version | grep -oP 'azure-cli\s+\K\d+\.\d+\d+')
+		if ! command -v az &> /dev/null; then
+		echo -e "$RED AZURE-CLI is not installed. Installing AZURE-CLI.$CLEAR"
+
+			curl -sLS https://packages.microsoft.com/keys/microsoft.asc |
+		gpg --dearmor |
+		sudo tee /etc/apt/keyrings/microsoft.gpg > /dev/null
+		sudo chmod go+r /etc/apt/keyrings/microsoft.gpg
+				
+		#AZ_DIST=$(lsb_release -cs)
+		echo "deb [arch=`dpkg --print-architecture` signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ jammy main" |
+			sudo tee /etc/apt/sources.list.d/azure-cli.list
+		sudo apt-get update
+        sudo apt-get install azure-cli
+
+		echo -e "$GREEN AZURE-CLI has been installed successfully.$CLEAR"
+	else
+		echo -e "$YELLOW  The installation of AZURE-CLI ($azure_v) already exists.$CLEAR"
+	fi
 }
 
 function inst-cloud-tools { 
@@ -135,6 +180,9 @@ argocd-stable
 helm-stable
 minikube-stable
 terraform-stable
+gcloud-cli-stable
+aws-cli-stable
+azure-cli-stable
 }
 
 inst-cloud-tools

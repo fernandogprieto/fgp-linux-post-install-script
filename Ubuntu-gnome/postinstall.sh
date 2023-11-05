@@ -71,7 +71,7 @@ then
 
 		# ----- PPAs -----#
 		PPAS=(
-			ppa:ansible/ansible
+			ppa:ansible/ansible 
 			ppa:stellarium/stellarium-releases # Stellarium
 			# ppa:graphics-drivers/ppa		   # Nvidia
 			# ppa:libreoffice/ppa              # LibreOffice
@@ -145,7 +145,11 @@ then
 			git 
 			nano
 			vim 
-			tree 
+			tree
+			groff
+			psutilssu
+			less
+			glibc-source
 
 			# Gnome
 			chrome-gnome-shell
@@ -177,6 +181,7 @@ then
 			
 			#Cloud-Tools
 			ansible
+			ansible-core
 			
 			# Fonts
 			fonts-apropal
