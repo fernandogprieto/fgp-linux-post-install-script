@@ -173,6 +173,7 @@ function azure-cli-stable(){
 	fi
 }
 
+# Install cloud tools
 function inst-cloud-tools { 
 docker-stable
 kubectl-stable
@@ -185,4 +186,32 @@ aws-cli-stable
 azure-cli-stable
 }
 
-inst-cloud-tools
+# Call the function to install the cloud tools
+#inst-cloud-tools
+
+# Define an array of application commands
+declare -a cloud_commands=(
+	"docker"
+	"kubectl"
+	"argocd"
+	"helm"
+	"minikube"
+	"terraform"
+	"gcloud"
+	"aws"
+	"az"
+)
+# Check if applications were installed correctly
+function check-cloud-tools(){
+	for cloud_command in "${cloud_commands[@]}"; do
+    if command -v "$cloud_command" &> /dev/null; then
+      echo -e "   ${GREEN}[INSTALLED] - $cloud_command ${NC}"
+    else
+      echo -e "   ${RED}[ERROR] - $cloud_command ${NC}"
+    fi
+  done
+
+}
+
+# Call the function to check the cloud tools
+#check-cloud-tools

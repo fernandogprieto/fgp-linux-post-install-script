@@ -147,7 +147,7 @@ then
 			vim 
 			tree
 			groff
-			psutilssu
+			psutils
 			less
 			glibc-source
 
@@ -369,7 +369,25 @@ then
     				echo "${RED}[ERROR] applications.sh does not exist or is not accessible. ${NC}"
     		exit 1
 			fi
+
 	
+# ---------------------------------------------------------------------------- #
+
+# ------------------------------- CLOUD TOOLS  ------------------------------- #
+# DevOps, Cloud Tools, SRE. 
+
+	echo "Sourcing cloud-tools.sh to use its functions..."
+			if [ -f "$(pwd)/cloud-tools.sh" ]; then
+				chmod +x ./cloud-tools.sh
+    			source ./cloud-tools.sh
+
+    		# Call the inst-apps function to install applications
+    			inst-cloud-tools
+			else
+    				echo "${RED}[ERROR] cloud-tools.sh does not exist or is not accessible. ${NC}"
+    		exit 1
+			fi
+
 # ---------------------------------------------------------------------------- #
 
 # ------------------------------- POST INSTALL ------------------------------- #
@@ -425,6 +443,10 @@ done
 echo -e "\nApplications installed:"
 source ./applications.sh
 check-apps
+
+echo -e "\nCloud-Tools installed:"
+source ./cloud-tools.sh
+check-cloud-tools
 
 # echo -e "\n Reboot Now \n"
 # ----------------------------------- END ------------------------------------ #
