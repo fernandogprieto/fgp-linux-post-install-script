@@ -1,6 +1,6 @@
 # 👋 Welcome
 
-This is my personal scripts for Ubuntu 23.10 installation and derivates as a Debian, Linux Mint and another ubuntu versions. It's a powerful, versatile, and easy-to-use tool that can save you a lot of time and effort.
+This is my personal scripts for Ubuntu 23.10 installation and derivates as a Debian, Linux Mint and another Ubuntu versions. It's a powerful, versatile, and easy-to-use tool that can save you a lot of time and effort.
 
 ## Linux Post Install Scripts
 
