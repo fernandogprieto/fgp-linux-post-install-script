@@ -90,6 +90,9 @@ then
 			linux-headers-generic 
 			python3 
 			python3-smbc
+			python-is-python3
+			python3-fontforge
+			fontforge
 			smbclient
 			npm
 			exfat-fuse 
@@ -150,6 +153,7 @@ then
 			psutils
 			less
 			glibc-source
+			plocate
 
 			# Gnome
 			chrome-gnome-shell
@@ -183,7 +187,7 @@ then
 			ansible
 			ansible-core
 			
-			# Fonts
+			# Fonts 
 			fonts-apropal
 			fonts-atarismall
 			fonts-baekmuk
