@@ -253,6 +253,7 @@ then
 			inkscape
 			skype
 			pycharm-community
+			jdownloader2
 		)
 
 		echo -e "$BLUE Updating package list && upgrade ... $CLEAR"
