@@ -93,6 +93,7 @@ then
 			python-is-python3
 			python3-fontforge
 			python3-pip
+			python3-full
 			fontforge
 			smbclient
 			npm
